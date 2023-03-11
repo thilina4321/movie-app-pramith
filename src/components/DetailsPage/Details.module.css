@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.h2 {
+  padding: 2rem;
+  background-color: grey;
+  width: 90%;
+  text-align: center;
+}
+
+.overview {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.vote{
+    background-color: orange;
+    padding: 1rem;
+}
