@@ -1,10 +1,12 @@
 import { Movie, Options } from "./types";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { getMovies } from "./http/http";
 import Header from "./components/Header/Header";
 import TrendingMovies from "./components/Trending/Trending";
 import UpcomingMovies from "./components/Upcoming/Upcoming";
 import Details from "./components/DetailsPage/Details";
+import { movies } from "./store";
 
 function App() {
   const [option, setOption] = useState<Options>(Options.trending);
@@ -13,8 +15,9 @@ function App() {
     undefined
   );
 
-  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([]);
-  const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
+  const trendingMv = useSelector((state: any) => state.movies.trendingMovies);
+  const upcomingMv = useSelector((state: any) => state.movies.upcomingMovies);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getTrendingMoviesHandler();
@@ -30,7 +33,7 @@ function App() {
     const { success, data } = await getMovies(Options.trending);
     if (success && data?.results) {
       const { results } = data;
-      setTrendingMovies(() => [...results]);
+      dispatch(movies.addTrendingMovies({ trendingMovies: [...results] }));
     }
   };
 
@@ -38,14 +41,14 @@ function App() {
     const { success, data } = await getMovies(Options.upcoming);
     if (success && data?.results) {
       const { results } = data;
-      setUpcomingMovies(() => [...results]);
+      dispatch(movies.addUpcomingMovies({ upcomingMovies: [...results] }));
     }
   };
 
   const selectedMovieHandler = (index: number) => {
     setIsDetailPage(true);
 
-    const movies = [...trendingMovies];
+    const movies = [...trendingMv];
     const movie = movies[index];
     setSelectedMovie(movie);
   };
@@ -64,13 +67,13 @@ function App() {
       {!isDetailPage && option === Options.trending && (
         <TrendingMovies
           selectedMovieHandler={selectedMovieHandler}
-          movies={trendingMovies}
+          movies={trendingMv}
         />
       )}
 
       {/* Upcoming Movies */}
       {!isDetailPage && option === Options.upcoming && (
-        <UpcomingMovies movies={upcomingMovies} />
+        <UpcomingMovies movies={upcomingMv} />
       )}
 
       {/* Movie Details */}
